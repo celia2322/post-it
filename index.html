@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Post-it Déplaçable</title>
+  <style>
+    #postit {
+      background-color: #d3d3d3;
+      width: 250px;
+      height: 250px;
+      padding: 10px;
+      box-shadow: 3px 3px 10px rgba(0,0,0,0.3);
+      border-radius: 10px;
+      font-family: Arial, sans-serif;
+      position: absolute;
+      top: 100px;
+      left: 100px;
+      cursor: move;
+    }
+
+    #content {
+      width: 100%;
+      height: 90%;
+      border: none;
+      resize: none;
+      background: transparent;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .header {
+      cursor: move;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="postit">
+    <div class="header">📝 Post-it</div>
+    <textarea id="content" placeholder="Écris ici..."></textarea>
+  </div>
+
+  <script>
+    // Restaure le contenu si disponible
+    const content = document.getElementById('content');
+    content.value = localStorage.getItem('postitContent') || '';
+
+    // Sauvegarde automatique à chaque frappe
+    content.addEventListener('input', () => {
+      localStorage.setItem('postitContent', content.value);
+    });
+
+    // Fonction pour rendre le post-it déplaçable
+    const postit = document.getElementById('postit');
+    const header = postit.querySelector('.header');
+    let offsetX = 0, offsetY = 0, isDragging = false;
+
+    header.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      offsetX = e.clientX - postit.offsetLeft;
+      offsetY = e.clientY - postit.offsetTop;
+      document.body.style.userSelect = 'none'; // empêche la sélection de texte
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (isDragging) {
+        postit.style.left = `${e.clientX - offsetX}px`;
+        postit.style.top = `${e.clientY - offsetY}px`;
+      }
+    });
+
+    document.addEventListener('mouseup', () => {
+      isDragging = false;
+      document.body.style.userSelect = 'auto';
+    });
+  </script>
+
+</body>
+</html>
